@@ -1,0 +1,5 @@
+﻿RAG stands for Retrieval-Augmented Generation.
+
+RAG retrieves relevant information from documents and helps a language model generate context-aware answers.
+
+Our Alexa+ RAG Assistant uses Python, Gemini, and MCP.
