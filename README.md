@@ -1,94 +1,138 @@
-
 # Alexa+ RAG Assistant
 
-Upload documents, ask questions, and receive answers grounded in your files with source citations. The question-answering feature is also available as an MCP tool.
+A Python-based document question-answering assistant that retrieves relevant information from project documents and returns answers with source filenames. It also exposes question-answering functionality through an MCP server.
 
-Built for the Build, Ship, Shape: Amazon Developer Hackathon 2026 (Alexa+ track).
+Built for the **Build, Ship, Shape: Amazon Developer Hackathon 2026 — Alexa+ track**.
 
 ## Features
 
-- Upload PDF, TXT and Markdown files
-- Extract text and split documents into chunks
-- Generate local embeddings using FastEmbed
-- Retrieve relevant document chunks using cosine similarity
-- Generate answers using Google Gemini
-- Provide source citations from retrieved documents
-- MCP tool named `ask_documents`
+- Ask questions through a Flask web interface.
+- Search existing project documents for relevant information.
+- Retrieve relevant document text using semantic search.
+- Return answers based on retrieved document content.
+- Display source filenames in search results.
+- Provide a fallback response when relevant information is not found.
+- Expose three MCP tools:
+  - `ask_about_project`
+  - `search_knowledge`
+  - `ask_documents`
 
 ## Architecture
 
-Browser UI → Flask app (`app.py`) → RAG pipeline (`rag.py`)
+Browser UI → Flask application (`app.py`) → `semantic_search.py`
 
-The RAG pipeline uses:
-- pypdf for PDF text extraction
-- FastEmbed for embeddings
-- NumPy for similarity search
-- Google Gemini API for answer generation
+MCP client → MCP server (`mcp_server.py`) → Flask `/ask` endpoint
 
-MCP client → `mcp_server.py` → Flask `/ask` endpoint
+The project dependencies include:
+
+- **Python** — application logic
+- **Flask** — web interface and question-answering endpoint
+- **FastEmbed** — local text embeddings
+- **NumPy** — numerical operations for similarity search
+- **Google GenAI SDK** — Gemini API integration
+- **MCP** — exposes project tools to compatible clients
+- **pypdf** — PDF text extraction dependency
 
 ## Requirements
 
-- Windows 10/11
+- Windows 10 or Windows 11
 - Python 3.10 or newer
-- Google Gemini API key
+- Git
+- Google Gemini API key, if using Gemini-powered functionality
 
 ## Installation
 
+Clone the repository:
+
 ```powershell
-git clone https://github.com/YOUR-USERNAME/alexa-rag-assistant.git
+git clone https://github.com/LakshmiNSN/alexa-rag-assistant.git
 cd alexa-rag-assistant
+```
+
+Create and activate a virtual environment:
+
+```powershell
 py -m venv .venv
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```powershell
 py -m pip install -r requirements.txt
 ```
 
 ## Configuration
 
-Create a `.env` file based on `.env.example` and add your Gemini API key.
+If Gemini-powered functionality is required, configure your API key using the environment-variable method supported by your application.
+
+Example:
 
 ```ini
 GEMINI_API_KEY=your_key_here
 ```
 
-Never commit `.env` to GitHub.
+Never commit your actual API key or other secrets to GitHub.
 
 ## Usage
 
-Start the Flask application:
+### 1. Start the Flask application
+
+Open a terminal in the project directory and run:
 
 ```powershell
 py app.py
 ```
 
-Open http://127.0.0.1:5000 in your browser.
+Open the web interface:
 
-Start the MCP server in a second terminal:
+http://127.0.0.1:5000
+
+Enter a question about the existing project documents and click the question button.
+
+### 2. Start the MCP server
+
+Open a second terminal in the project directory, activate the virtual environment, and run:
 
 ```powershell
+.\.venv\Scripts\Activate.ps1
 py mcp_server.py
 ```
 
-MCP endpoint: http://127.0.0.1:8000/mcp
+MCP endpoint:
+
+http://127.0.0.1:8000/mcp
+
+Keep both servers running when testing the MCP tools.
 
 ## Testing
 
-Run the test script with both servers running:
+Run the MCP test script from another terminal:
 
 ```powershell
 py test_mcp.py
 ```
 
-Test results: Add your actual test results here.
+### Tests completed
+
+- Flask question-answering interface tested.
+- Relevant document questions returned answers and source filenames.
+- Unsupported questions returned a fallback response.
+- MCP server started successfully.
+- `test_mcp.py` completed successfully.
+- Verified the following MCP tools:
+  - `ask_about_project`
+  - `search_knowledge`
+  - `ask_documents`
 
 ## Known Limitations
 
-- Documents are stored in memory and lost when the web app restarts.
-- Scanned PDFs without extractable text are not supported.
-- Both the Flask app and MCP server must be running for MCP requests.
-- No authentication or per-user document separation.
-- Alexa+ integration status: Describe what you actually tested.
+- The current web interface searches existing project documents; document upload has not been verified.
+- Answers depend on the information retrieved from the available documents.
+- Both the Flask application and MCP server must be running for the tested MCP workflow.
+- Authentication and per-user document separation have not been implemented or verified.
+- Direct Alexa+ device integration has not been verified.
 
 ## License
 
-MIT License. See the `LICENSE` file.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
